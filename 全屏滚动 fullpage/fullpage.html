@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>全屏滚动</title>
+  <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/1.9.1/jquery.min.js"></script>
+  <style>
+    html,body{
+      padding: 0;
+      margin: 0;
+    }
+    body{
+      overflow: hidden;
+    }
+    ul,li{
+      list-style-type: none;
+    }
+    #bullet{
+      position: fixed;
+      top: 20px;
+      right: 20px;
+    }  
+    #bullet li{
+      width: 8px;
+      height: 8px;
+      border-radius: 8px;
+      background-color: #E4F0F5;
+      margin-bottom: 20px; 
+      cursor: pointer;   
+    }
+    #bullet .active{
+      width: 10px;
+      height: 10px;
+      background-color: transparent;
+      border: 2px solid #40970E;
+      transform: translateX(-3px);
+    }
+    .section{
+      box-sizing:border-box;
+    }
+    .section:first-child{
+      background-color: #FAA702;
+    }
+    .section:nth-child(2){
+      background-color: #32F83A;
+    }
+    .section:nth-child(3){
+      background-color: #326AF8;
+    }
+    .section:nth-child(4){
+      background-color: #F87232;
+    }
+  </style>
+</head>
+<body>
+  <div class="section">1</div>
+  <div class="section">2</div>
+  <div class="section">3</div>
+  <div class="section">4</div>
+  <ul id="bullet">
+    <li class="active"></li>
+    <li></li>
+    <li></li>
+    <li></li>
+  </ul>
+  <script>
+
+    setNodeHeightAlways()
+
+    var curPag = 1,
+        winHight = $(window).height();
+        isScroll = false;
+
+    $('#bullet').on('click','li',function(){
+       $('#bullet li').removeClass('active')
+                      .eq($(this).index()).addClass('active');
+        curPag = $(this).index() + 1;
+
+        $('body').stop().animate({
+            scrollTop:winHight*(curPag-1)
+        })
+    })
+
+    $(window).on('wheel',function(e){
+      var idx=curPag-1;
+     
+      console.log(curPag)
+        if (isScroll) {
+          e.preventDefault();
+          return
+        }
+        var dir = e.originalEvent.deltaY > 0 ? 'down' : 'up';
+        if (curPag === 4 && dir === 'down'){
+          return
+        }
+        if (curPag === 1 && dir === 'up'){
+          return
+        }
+
+        isScroll = true;
+        $('body').stop().animate({
+            scrollTop:winHight*(dir==='down' ? curPag :curPag-2 )
+        },function(){
+            curPag = (dir==='down' ? curPag+1 : curPag-1)
+            isScroll = false;
+        });
+         $('#bullet li').removeClass('active').eq((dir==='down' ? curPag :curPag-2 )).addClass('active');
+    })
+
+    //工具函数
+    function setNodeHeight(){
+       var winHight = $(window).height();
+       $('.section').each(function(){
+        $(this).css('height',winHight);
+       });
+    }
+    function setNodeHeightAlways(){
+      setNodeHeight();
+      $(window).on('resize',function(){
+        setNodeHeight();
+      })
+    }
+  </script>
+</body>
+</html>
