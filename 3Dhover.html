@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>3D hover</title>
+  <style>
+    *{box-sizing: border-box;}
+    div#test{
+      width: 100%;
+      height: 500px;
+      background: white;
+      padding: 100px 0; 
+      margin: 100px auto;
+      border: 1px solid;
+      perspective: 1000px;
+    }
+    #banner{
+      height: 300px;
+      width: 400px;
+      margin: 0 auto;
+      background:  #37D7B2;
+      transition: transform 0.1s;
+      box-shadow: 0 0 20px rgba(0,0,0,0.25);
+      text-align: center;
+      line-height: 300px;
+      font-size: 50px;
+      color: #fff;
+    }
+    .banner-text{
+      color: #eee;
+      text-shadow: 4px 2px 3px #ccc;
+    }
+    body{
+      background: white;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+<script src="https://code.jquery.com/jquery-3.1.0.js"></script>
+
+  <div id="test">
+    <div id="banner"><span class="banner-text">banner</span></div>
+  </div>
+<script>
+$('#test').on('mousemove', function(e){
+
+  var offset = $('#test').offset(),
+      x = e.pageX - offset.left,
+      y = e.pageY - offset.top; //得到点所点击的点 到监听元素边界左上的距离
+  
+  
+  var centerX = $('#test').outerWidth() /2, //得到监听元素中心点坐标
+      centerY = $('#test').outerHeight() /2;
+  
+  var deltaX = x - centerX,  //得到所点击点到中心点的距离
+      deltaY = y - centerY;
+
+  var percentX = deltaX / centerX, //得到所点坐标距离和中心点的比例
+      percentY = deltaY / centerY;
+  
+  var deg = 20
+  
+  $('#banner').removeAttr('style');
+  
+  $('#banner').css({
+    transform: 'rotateX('+deg*-percentY + 'deg)'+  //根据这个比例设置元素的偏移程度
+    ' rotateY('+deg*percentX+'deg)'
+  })
+
+})
+$('#test').on('mouseout', function(e){
+  $('#banner').css({
+    transition: "transform 0.5s",
+    transform: "rotateX(0deg) rotateY(0deg)",
+  },"slow")     
+}) 
+</script>
+</body>
+</html>
